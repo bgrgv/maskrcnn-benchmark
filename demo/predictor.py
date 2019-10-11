@@ -327,9 +327,14 @@ class COCODemo(object):
 
         for mask, color in zip(masks, colors):
             thresh = mask[0, :, :, None]
-            contours, hierarchy = cv2_util.findContours(
-                thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
-            )
+            if cv2.__version__.startswith('4'):  #for newer versions of openCV
+                contours, hierarchy = cv2_util.findContours(
+                    thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
+                )
+            elif cv2.__version__.startswith('3'): #to maintain backward compatibility
+                _, contours, hierarchy = cv2_util.findContours(
+                    thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
+                )
             image = cv2.drawContours(image, contours, -1, color, 3)
 
         composite = image
